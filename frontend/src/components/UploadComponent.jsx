@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { uploadDocument } from '../services/documentService.js';
 
-export default function UploadForm({ userId, onUploaded }) {
+export default function UploadComponent({ userId, onUploaded }) {
   const [file, setFile] = useState(null);
   const [isSending, setIsSending] = useState(false);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
@@ -13,12 +13,13 @@ export default function UploadForm({ userId, onUploaded }) {
       return;
     }
 
+    const form = event.currentTarget;
     setIsSending(true);
     try {
       await uploadDocument(file, userId);
       setFeedback({ type: 'success', message: 'Documento enviado com sucesso.' });
       setFile(null);
-      event.target.reset();
+      form.reset();
       onUploaded();
     } catch (error) {
       setFeedback({ type: 'error', message: error.message });

@@ -150,7 +150,7 @@ Tratamento de erros: erros de domínio (`DocumentNotFoundError`) são mapeados p
 ### Frontend
 
 - Componentes funcionais com React Hooks
-- Estrutura: `components/` (`UploadForm`, `DocumentList`), `pages/` (`DocumentsPage`), `services/` (`documentService.js` com `fetch` para `/api`)
+- Estrutura: `components/` (`UploadComponent`, `DocumentList`, `DownloadButton`), `services/` (`documentService.js` com `fetch` para `/api`); `App.jsx` monta a interface de upload, listagem e download
 - Identificador do usuário definido na tela e enviado em `X-User-Id`
 
 ### Restrições
@@ -187,7 +187,7 @@ Roadmap em etapas, na ordem de implementação.
 - Depende da Etapa 3.
 
 **Etapa 5: Frontend**
-- `services/documentService.js` (chamadas `fetch` em `/api`), `UploadForm`, `DocumentList`, `DocumentsPage`, `App.jsx`.
+- `services/documentService.js` (chamadas `fetch` em `/api`), `UploadComponent`, `DocumentList`, `DownloadButton`, `App.jsx`.
 - O proxy `/api` do `vite.config.js` já existe.
 - Depende do contrato fechado na seção 6.
 

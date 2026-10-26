@@ -1,5 +1,23 @@
 # Document Management System com GitHub Copilot
 
+## Executar localmente
+
+Requisitos: Node.js 24 ou superior.
+
+- Backend: `cd backend && npm install && npm start` (porta padrão 3000)
+- Testes do backend: `cd backend && npm test`
+- Frontend: `cd frontend && npm install && npm run dev` (porta 5173, proxy `/api` para o backend)
+
+Variáveis de ambiente do backend (opcionais):
+
+| Variável            | Padrão            | Uso                            |
+| ------------------- | ----------------- | ------------------------------ |
+| PORT                | 3000              | Porta do backend               |
+| STORAGE_DIR         | `backend/storage` | Pasta de gravação dos arquivos |
+| MAX_FILE_SIZE_BYTES | 10485760 (10 MB)  | Limite de tamanho por arquivo  |
+
+Especificação completa: [docs/specs/dms-spec.md](docs/specs/dms-spec.md).
+
 <img src="https://octodex.github.com/images/Professortocat_v2.png" align="right" height="200px" />
 
 Hey alexandremoura!

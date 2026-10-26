@@ -1,23 +1,9 @@
 const { test } = require('node:test');
 const assert = require('node:assert');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
 const { createDocumentRepository } = require('../src/repositories/documentRepository');
 
-function createTempStorageDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'dms-repo-'));
-}
-
-test('cria a pasta de armazenamento ao iniciar o repositório', () => {
-  const storageDir = path.join(createTempStorageDir(), 'nested');
-  createDocumentRepository({ storageDir });
-
-  assert.ok(fs.existsSync(storageDir));
-});
-
 test('salva e busca documentos por id', () => {
-  const repository = createDocumentRepository({ storageDir: createTempStorageDir() });
+  const repository = createDocumentRepository();
   const document = { id: 'doc-1', storedName: 'doc-1', owner: 'user-1' };
 
   repository.save(document);
@@ -27,7 +13,7 @@ test('salva e busca documentos por id', () => {
 });
 
 test('lista somente os documentos do dono informado', () => {
-  const repository = createDocumentRepository({ storageDir: createTempStorageDir() });
+  const repository = createDocumentRepository();
   repository.save({ id: 'a', storedName: 'a', owner: 'user-1' });
   repository.save({ id: 'b', storedName: 'b', owner: 'user-2' });
 
@@ -36,11 +22,13 @@ test('lista somente os documentos do dono informado', () => {
   assert.deepStrictEqual(ids, ['a']);
 });
 
-test('resolve o caminho do arquivo dentro da pasta de armazenamento', () => {
-  const storageDir = createTempStorageDir();
-  const repository = createDocumentRepository({ storageDir });
+test('não permite que alterações externas mudem os metadados armazenados', () => {
+  const repository = createDocumentRepository();
+  repository.save({ id: 'doc-1', owner: 'user-1', originalName: 'original.pdf' });
 
-  const filePath = repository.getFilePath({ storedName: 'uuid-1' });
+  repository.findById('doc-1').originalName = 'alterado.pdf';
+  repository.listByOwner('user-1')[0].owner = 'user-2';
 
-  assert.strictEqual(filePath, path.join(storageDir, 'uuid-1'));
+  assert.strictEqual(repository.findById('doc-1').originalName, 'original.pdf');
+  assert.strictEqual(repository.findById('doc-1').owner, 'user-1');
 });

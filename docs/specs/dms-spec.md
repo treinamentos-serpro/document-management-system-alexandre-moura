@@ -60,7 +60,7 @@ Entregar um sistema web que permite enviar, listar e baixar documentos, com gest
 | mimeType     | string | Tipo MIME informado no envio (ex.: `application/pdf`)                  |
 | size         | number | Tamanho em bytes                                                       |
 | uploadedAt   | string | Data/hora do upload (ISO 8601)                                         |
-| owner        | string | Identificador do usuário dono (valor de `X-User-Id`, sem espaços nas bordas) |
+| owner        | string | Identificador do usuário dono (valor de `X-User-Id`, sem espaços nas bordas e com até 64 caracteres) |
 
 Regras:
 - Os metadados ficam em um `Map` indexado por `id` no repositório.
@@ -71,7 +71,7 @@ Regras:
 Base: backend em `http://localhost:3000`. O frontend acessa os mesmos caminhos com o prefixo `/api`, via proxy do Vite, que remove o prefixo.
 
 Header comum a todos os endpoints de documentos:
-- `X-User-Id: <string não vazia>` (obrigatório)
+- `X-User-Id: <string não vazia, com até 64 caracteres>` (obrigatório)
 
 Formato de erro:
 
@@ -102,20 +102,23 @@ Formato de erro:
 - Erros:
   - `400`: campo `file` ausente ou inesperado
   - `401`: header `X-User-Id` ausente ou vazio
+  - `400`: header `X-User-Id` com mais de 64 caracteres
   - `413`: arquivo acima de `MAX_FILE_SIZE_BYTES`
   - `500`: falha ao gravar o arquivo
 
 ### GET /documents
 
 - Resposta `200`: array com os metadados dos documentos do usuário, ordenado por `uploadedAt` decrescente. Lista vazia retorna `[]`.
-- Erros: `401` (sem `X-User-Id`)
+- Erros: `401` (sem `X-User-Id`) e `400` (`X-User-Id` com mais de 64 caracteres)
 
 ### GET /documents/:id/download
 
 - Resposta `200`: conteúdo binário do arquivo
-  - `Content-Type`: `mimeType` do documento
+  - `Content-Type`: `mimeType` do documento (o Express pode acrescentar o parâmetro `charset` em tipos `text/*`)
+  - `X-Content-Type-Options: nosniff`
   - `Content-Disposition: attachment; filename="<originalName>"` (com encoding quando necessário)
 - Erros:
+  - `400`: header `X-User-Id` com mais de 64 caracteres
   - `401`: sem `X-User-Id`
   - `404`: documento inexistente ou pertencente a outro usuário
   - `500`: arquivo ausente no disco ou falha de leitura
@@ -126,20 +129,22 @@ Formato de erro:
 
 | Camada         | Responsabilidade                                                                                   | Arquivo previsto                     |
 | -------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| routes/        | Definir endpoints e aplicar `requireOwner` e `upload.single('file')`; delegar ao controller        | `routes/documentRoutes.js`           |
+| routes/        | Definir endpoints e aplicar `requireOwner` (de `middlewares/`) e `upload.single('file')`; delegar ao controller | `routes/documentRoutes.js`           |
 | controllers/   | Ler header e arquivo, validar entrada básica, montar resposta HTTP e mapear erros de domínio       | `controllers/documentController.js`  |
 | services/      | Regras de negócio: criar documento, listar por dono, obter para download por dono                  | `services/documentService.js`        |
-| repositories/  | Persistência: `Map` de metadados e engine `diskStorage` do `multer`                                | `repositories/documentRepository.js` |
+| repositories/  | Persistência: `documentRepository` (`Map` de metadados, devolve cópias) e `fileRepository` (engine `diskStorage` do `multer` e resolução segura de caminhos) | `repositories/documentRepository.js`, `repositories/fileRepository.js` |
 | composição     | Criação das dependências, middleware de erro e configuração do `multer`                            | `src/createApp.js`                   |
-| config         | Leitura de variáveis de ambiente com valores padrão                                                | `src/config.js`                      |
+| config         | Leitura de variáveis de ambiente com valores padrão e validação (valor inválido interrompe a inicialização) | `src/config.js`                      |
 
 Fluxo de dependência: `routes -> controllers -> services -> repositories`. Camadas internas não importam Express nem `multer`.
 
 Composição: `createApp.js` cria o repositório, o serviço, o controller, as rotas e o `multer`, injetando as dependências (sem container de DI). `app.js` apenas carrega a configuração, cria o app e inicia o servidor.
 
-Tratamento de erros: erros de domínio (`DocumentNotFoundError`) são mapeados para status HTTP no controller; erros do `multer` (ex.: `LIMIT_FILE_SIZE`) e de JSON são mapeados no middleware de erro de `createApp.js`.
+Tratamento de erros: erros de domínio (`DocumentNotFoundError`) são mapeados para status HTTP no controller; erros do `multer` (ex.: `LIMIT_FILE_SIZE`) e de JSON são mapeados no middleware `middlewares/errorHandler.js`, registrado em `createApp.js`. O limite de `X-User-Id` é aplicado pelo middleware `middlewares/requireOwner.js`.
 
 ### Configuração (variáveis de ambiente)
+
+Valores inválidos (`PORT` fora de 1 a 65535, `MAX_FILE_SIZE_BYTES` que não seja inteiro positivo) impedem a inicialização com erro explícito.
 
 | Variável              | Padrão                   | Uso                              |
 | --------------------- | ------------------------ | -------------------------------- |

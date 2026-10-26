@@ -1,5 +1,5 @@
 const express = require('express');
-const { requireOwner } = require('../controllers/documentController');
+const { requireOwner } = require('../middlewares/requireOwner');
 
 function createDocumentRoutes({ documentController, upload }) {
   const router = express.Router();

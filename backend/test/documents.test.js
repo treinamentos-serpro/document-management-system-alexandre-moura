@@ -133,3 +133,41 @@ test('GET /documents/:id/download retorna 404 para id inexistente', async () => 
 
   assert.strictEqual(response.status, 404);
 });
+
+test('GET /documents/:id/download envia X-Content-Type-Options nosniff', async () => {
+  const uploaded = await (
+    await upload('user-nosniff', buildFileForm('<script>alert(1)</script>', { name: 'pagina.html', type: 'text/html' }))
+  ).json();
+
+  const response = await download('user-nosniff', uploaded.id);
+
+  assert.strictEqual(response.status, 200);
+  assert.strictEqual(response.headers.get('x-content-type-options'), 'nosniff');
+  assert.strictEqual(response.headers.get('content-type').split(';')[0], 'text/html');
+});
+
+test('POST /upload não usa o nome enviado como caminho em disco', async () => {
+  const filesBefore = fs.readdirSync(storageDir).length;
+
+  const response = await upload('user-traversal', buildFileForm('x', { name: '../../fora.txt', type: 'text/plain' }));
+  const body = await response.json();
+
+  assert.strictEqual(response.status, 201);
+  assert.ok(fs.existsSync(path.join(storageDir, body.id)));
+  assert.strictEqual(fs.readdirSync(storageDir).length, filesBefore + 1);
+});
+
+test('POST /upload rejeita X-User-Id com mais de 64 caracteres sem gravar arquivo', async () => {
+  const filesBefore = fs.readdirSync(storageDir).length;
+
+  const response = await upload('x'.repeat(65), buildFileForm('dono longo'));
+
+  assert.strictEqual(response.status, 400);
+  assert.strictEqual(fs.readdirSync(storageDir).length, filesBefore);
+});
+
+test('GET /documents rejeita X-User-Id com mais de 64 caracteres', async () => {
+  const response = await listDocuments('x'.repeat(65));
+
+  assert.strictEqual(response.status, 400);
+});

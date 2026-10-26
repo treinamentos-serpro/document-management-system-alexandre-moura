@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { downloadDocument } from '../services/documentService.js';
 
+const REVOKE_DELAY_MS = 1000;
+
 function saveBlob(blob, fileName) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
   link.download = fileName;
+  document.body.append(link);
   link.click();
-  URL.revokeObjectURL(url);
+  link.remove();
+  // Adia a revogação: alguns navegadores ainda não iniciaram o download neste ponto.
+  setTimeout(() => URL.revokeObjectURL(url), REVOKE_DELAY_MS);
 }
 
 export default function DownloadButton({ doc, userId }) {

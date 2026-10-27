@@ -1,32 +1,35 @@
-# Document Management System com GitHub Copilot
+<div align="center">
 
-## Executar localmente
+# 🎉 Congratulations alexandremoura! 🎉
 
-Requisitos: Node.js 24 ou superior.
+<img src="https://octodex.github.com/images/welcometocat.png" height="200px" />
 
-- Backend: `cd backend && npm install && npm start` (porta padrão 3000)
-- Testes do backend: `cd backend && npm test`
-- Frontend: `cd frontend && npm install && npm run dev` (porta 5173, proxy `/api` para o backend)
+### 🌟 You've successfully completed the exercise! 🌟
 
-Variáveis de ambiente do backend (opcionais):
+## 🚀 Share Your Success!
 
-| Variável            | Padrão            | Uso                            |
-| ------------------- | ----------------- | ------------------------------ |
-| PORT                | 3000              | Porta do backend               |
-| STORAGE_DIR         | `backend/storage` | Pasta de gravação dos arquivos |
-| MAX_FILE_SIZE_BYTES | 10485760 (10 MB)  | Limite de tamanho por arquivo  |
+**Show off your new skills and inspire others!**
 
-Especificação completa: [docs/specs/dms-spec.md](docs/specs/dms-spec.md).
+<a href="https://twitter.com/intent/tweet?text=I%20just%20completed%20the%20%22Document%20Management%20System%20com%20GitHub%20Copilot%22%20GitHub%20Skills%20hands-on%20exercise!%20%F0%9F%8E%89%0A%0Ahttps%3A%2F%2Fgithub.com%2Ftreinamentos-serpro%2Fdocument-management-system-alexandre-moura%0A%0A%23GitHubSkills%20%23OpenSource%20%23GitHubLearn" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.shields.io/badge/Share%20on%20X-1da1f2?style=for-the-badge&logo=x&logoColor=white" alt="Share on X" />
+</a>
+<a href="https://bsky.app/intent/compose?text=I%20just%20completed%20the%20%22Document%20Management%20System%20com%20GitHub%20Copilot%22%20GitHub%20Skills%20hands-on%20exercise!%20%F0%9F%8E%89%0A%0Ahttps%3A%2F%2Fgithub.com%2Ftreinamentos-serpro%2Fdocument-management-system-alexandre-moura%0A%0A%23GitHubSkills%20%23OpenSource%20%23GitHubLearn" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.shields.io/badge/Share%20on%20Bluesky-0085ff?style=for-the-badge&logo=bluesky&logoColor=white" alt="Share on Bluesky" />
+</a>
+<a href="https://www.linkedin.com/feed/?shareActive=true&text=I%20just%20completed%20the%20%22Document%20Management%20System%20com%20GitHub%20Copilot%22%20GitHub%20Skills%20hands-on%20exercise!%20%F0%9F%8E%89%0A%0Ahttps%3A%2F%2Fgithub.com%2Ftreinamentos-serpro%2Fdocument-management-system-alexandre-moura%0A%0A%23GitHubSkills%20%23OpenSource%20%23GitHubLearn" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.shields.io/badge/Share%20on%20LinkedIn-0077b5?style=for-the-badge&logo=linkedin&logoColor=white" alt="Share on LinkedIn" />
+</a>
 
-<img src="https://octodex.github.com/images/Professortocat_v2.png" align="right" height="200px" />
+### 🎯 What's Next?
 
-Hey alexandremoura!
+**Keep the momentum going!**
 
-Mona here. I'm done preparing your exercise. Hope you enjoy! 💚
+[![](https://img.shields.io/badge/Return%20to%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/treinamentos-serpro/document-management-system-alexandre-moura/issues/1)
+[![GitHub Skills](https://img.shields.io/badge/Explore%20GitHub%20Skills-000000?style=for-the-badge&logo=github&logoColor=white)](https://learn.github.com/skills)
 
-Remember, it's self-paced so feel free to take a break! ☕️
+*There's no better way to learn than building things!* 🚀
 
-[![](https://img.shields.io/badge/Go%20to%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/treinamentos-serpro/document-management-system-alexandre-moura/issues/1)
+</div>
 
 ---
 

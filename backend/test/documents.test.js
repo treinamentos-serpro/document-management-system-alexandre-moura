@@ -1,6 +1,7 @@
 const { test, before, after } = require('node:test');
 const assert = require('node:assert');
 const { once } = require('node:events');
+const { setTimeout: delay } = require('node:timers/promises');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
@@ -99,8 +100,25 @@ test('GET /documents lista somente os documentos do usuário', async () => {
   const documents = await response.json();
 
   assert.strictEqual(response.status, 200);
-  assert.ok(documents.length >= 1);
+  assert.deepStrictEqual(documents.map((document) => document.originalName), ['a.txt']);
   assert.ok(documents.every((document) => document.owner === 'user-list'));
+});
+
+test('GET /documents retorna lista vazia para usuário sem documentos', async () => {
+  const response = await listDocuments('user-sem-documentos');
+
+  assert.strictEqual(response.status, 200);
+  assert.deepStrictEqual(await response.json(), []);
+});
+
+test('GET /documents ordena do mais recente ao mais antigo', async () => {
+  await upload('user-order', buildFileForm('antigo', { name: 'antigo.txt', type: 'text/plain' }));
+  await delay(5);
+  await upload('user-order', buildFileForm('novo', { name: 'novo.txt', type: 'text/plain' }));
+
+  const documents = await (await listDocuments('user-order')).json();
+
+  assert.deepStrictEqual(documents.map((document) => document.originalName), ['novo.txt', 'antigo.txt']);
 });
 
 test('GET /documents rejeita requisição sem X-User-Id', async () => {

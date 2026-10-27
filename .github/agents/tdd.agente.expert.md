@@ -1,6 +1,6 @@
 ---
 description: Agente de TDD que escreve testes antes da implementação seguindo o ciclo Red-Green-Refactor.
-name: tdd
+name: tdd-expert
 tools: ['search', 'codebase', 'usages', 'runTests', 'editFiles']
 handoffs:
   - label: Implementar para passar nos testes

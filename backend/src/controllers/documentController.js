@@ -1,16 +1,7 @@
 const { DocumentNotFoundError } = require('../services/documentService');
 
-function requireOwner(req, res, next) {
-  const owner = (req.get('X-User-Id') || '').trim();
-  if (!owner) {
-    return res.status(401).json({ error: 'Informe o cabeçalho X-User-Id.' });
-  }
-  req.owner = owner;
-  return next();
-}
-
-function toPublicDocument({ storedName, ...publicFields }) {
-  return publicFields;
+function toPublicDocument({ id, originalName, mimeType, size, uploadedAt, owner }) {
+  return { id, originalName, mimeType, size, uploadedAt, owner };
 }
 
 function createDocumentController({ documentService }) {
@@ -48,6 +39,7 @@ function createDocumentController({ documentService }) {
 
       const { document, filePath } = result;
       res.type(document.mimeType);
+      res.set('X-Content-Type-Options', 'nosniff');
       return res.download(filePath, document.originalName, (error) => {
         if (error && !res.headersSent) {
           next(error);
@@ -57,4 +49,4 @@ function createDocumentController({ documentService }) {
   };
 }
 
-module.exports = { createDocumentController, requireOwner };
+module.exports = { createDocumentController };

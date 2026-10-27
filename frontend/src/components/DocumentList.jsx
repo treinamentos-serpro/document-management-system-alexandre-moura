@@ -1,7 +1,15 @@
 import DownloadButton from './DownloadButton.jsx';
 
+const SIZE_UNITS = ['B', 'KB', 'MB', 'GB'];
+
 function formatSize(bytes) {
-  return `${(bytes / 1024).toFixed(1)} KB`;
+  let value = bytes;
+  let unitIndex = 0;
+  while (value >= 1024 && unitIndex < SIZE_UNITS.length - 1) {
+    value /= 1024;
+    unitIndex += 1;
+  }
+  return unitIndex === 0 ? `${value} B` : `${value.toFixed(1)} ${SIZE_UNITS[unitIndex]}`;
 }
 
 export default function DocumentList({ documents, userId }) {

@@ -5,7 +5,7 @@ class DocumentNotFoundError extends Error {
   }
 }
 
-function createDocumentService({ documentRepository, clock = () => new Date() }) {
+function createDocumentService({ documentRepository, fileRepository, clock = () => new Date() }) {
   return {
     createDocument({ storedName, originalName, mimeType, size, owner }) {
       const document = {
@@ -31,7 +31,7 @@ function createDocumentService({ documentRepository, clock = () => new Date() })
       if (!document || document.owner !== owner) {
         throw new DocumentNotFoundError(id);
       }
-      return { document, filePath: documentRepository.getFilePath(document) };
+      return { document, filePath: fileRepository.resolvePath(document.storedName) };
     },
   };
 }
